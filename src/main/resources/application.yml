@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: spring-properties
+
+  profiles:
+    active: local
