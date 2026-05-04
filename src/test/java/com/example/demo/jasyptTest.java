@@ -9,7 +9,7 @@ public class jasyptTest {
 	    jasypt.setPassword("testKey"); // -Djasypt.encryptor.password 값
 	    jasypt.setAlgorithm("PBEWithMD5AndDES");
 
-	    String target = "1234"; // 실제 운영 DB 비밀번호
+	    String target = "12341!"; // 실제 운영 DB 비밀번호
 	    String encrypted = jasypt.encrypt(target);
 	    
 	    System.out.println("암호화 결과: " + encrypted);

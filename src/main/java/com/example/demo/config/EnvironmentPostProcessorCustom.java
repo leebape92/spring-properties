@@ -19,8 +19,10 @@ public class EnvironmentPostProcessorCustom implements EnvironmentPostProcessor 
 
         String profile = environment.getProperty("spring.profiles.active", "local");
         
-        // 분리된 클래스들 호출
+        // 암호화
         StandardPBEStringEncryptor jasypt = JasyptUtil.getEncryptor(password);
+        
+        // 
         Map<String, Object> dbProperties = DbPropertyFactory.getDbProperties(profile, jasypt);
 
         environment.getPropertySources().addFirst(new MapPropertySource("customDbConfig", dbProperties));

@@ -10,11 +10,14 @@ public class DbPropertyFactory {
         Map<String, Object> props = new HashMap<>();
         
         if ("prod".equals(profile)) {
+        	props.put("spring.datasource.url", "jdbc:mysql://localhost:3306/test");
             props.put("spring.datasource.username", "prod_admin");
             props.put("spring.datasource.password", jasypt.decrypt("KTuJmTidTkkUA/hZaZxd+Q=="));
         } else {
-            props.put("spring.datasource.username", "root");
-            props.put("spring.datasource.password", jasypt.decrypt("KTuJmTidTkkUA/hZaZxd+Q=="));
+        	props.put("spring.datasource.url", "jdbc:mysql://localhost:3306/test");
+        	props.put("spring.datasource.driver-class-name", "com.mysql.cj.jdbc.Driver");
+            props.put("spring.datasource.username", "junho");
+            props.put("spring.datasource.password", jasypt.decrypt("aewjYBAbZyJ9Jsu6fy0g4Q=="));
         }
         return props;
     }

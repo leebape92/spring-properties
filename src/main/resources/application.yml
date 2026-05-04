@@ -1,6 +1,13 @@
 spring:
   application:
     name: spring-properties
-
   profiles:
     active: local
+#  datasource:
+#    url: ${spring.datasource.url} # 나중에 코드로 주입될 값을 참조하도록 설정
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG
+    org.springframework.jdbc.datasource: DEBUG
