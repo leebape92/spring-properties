@@ -10,11 +10,16 @@ public class jasyptTest {
 	    jasypt.setAlgorithm("PBEWithMD5AndDES");
 
 	    String target = "12341!"; // 실제 운영 DB 비밀번호
-	    String encrypted = jasypt.encrypt(target);
 	    
-	    System.out.println("암호화 결과: " + encrypted);
-	    // 1JcZr/Pu+sIZcfKWjkXswn54JmnxdbMJ0Jsx8Y5CZhMkCqESLAaKIQ==
-	    // 실행 결과 예: "6vXpW9L... (복잡한 문자열)"
+	    //	암호화
+	    String encrypted = jasypt.encrypt(target); 
+	    System.out.println("평문 -> 암호화 결과: " + encrypted); // H0ACLo2FmMwValO+Kt82HA==
+	    
+	    // 복호화
+	    String decrypted = jasypt.decrypt("H0ACLo2FmMwValO+Kt82HA==");
+	    System.out.println("암호화 -> 복호화 결과 ::: " + decrypted);
+	    
+	    
 		
 	}
 }

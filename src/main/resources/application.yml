@@ -3,9 +3,12 @@ spring:
     name: spring-properties
   profiles:
     active: local
-#  datasource:
-#    url: ${spring.datasource.url} # 나중에 코드로 주입될 값을 참조하도록 설정
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://localhost:3306/your_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: junho
+    # 민감한 비밀번호는 Jasypt로 암호화하여 ENC()로 감싸줍니다.
+    password: ENC(H0ACLo2FmMwValO+Kt82HA==)
 
 logging:
   level:
