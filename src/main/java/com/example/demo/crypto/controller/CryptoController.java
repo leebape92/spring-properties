@@ -12,7 +12,7 @@ import com.example.demo.crypto.service.CryptoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/crypto/test")
+@RequestMapping("/api/crypto/")
 @RequiredArgsConstructor
 public class CryptoController {
 
@@ -22,12 +22,14 @@ public class CryptoController {
     @PostMapping("/encrypt")
     public ResponseEntity<String> encrypt(@RequestBody CryptoRequestDto cryptoRequestDto) {
     	String encryptResult = cryptoService.encrypt(cryptoRequestDto);
+    	System.out.println("encryptResult:::" + encryptResult);
         return ResponseEntity.ok(encryptResult);
     }
     
     @PostMapping("/decrypt")
     public ResponseEntity<String> decrypt(@RequestBody CryptoRequestDto cryptoRequestDto) {
         String decryptResult = cryptoService.decrypt(cryptoRequestDto);
+        System.out.println("decryptResult:::" + decryptResult);
         return ResponseEntity.ok(decryptResult);
     }
     

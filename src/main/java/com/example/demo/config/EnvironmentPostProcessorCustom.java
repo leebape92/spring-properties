@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -29,6 +31,7 @@ public class EnvironmentPostProcessorCustom implements EnvironmentPostProcessor 
             // 키가 없으면 복호화를 수행하지 않고 패스 (또는 예외 처리)
             return;
         }
+        
 
         MutablePropertySources propertySources = environment.getPropertySources();
         Map<String, Object> decryptedProperties = new HashMap<>();
