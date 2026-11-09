@@ -18,8 +18,6 @@ public class jasyptTest {
 	    // 복호화
 	    String decrypted = jasypt.decrypt("H0ACLo2FmMwValO+Kt82HA==");
 	    System.out.println("암호화 -> 복호화 결과 ::: " + decrypted);
-	    
-	    
-		
 	}
+	
 }

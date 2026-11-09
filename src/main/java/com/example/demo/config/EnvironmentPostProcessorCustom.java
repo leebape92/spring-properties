@@ -67,14 +67,6 @@ public class EnvironmentPostProcessorCustom implements EnvironmentPostProcessor 
         
         System.out.println("PROPERTY_SOURCE_NAME :::" + PROPERTY_SOURCE_NAME);
     }
-
-//    private Iterable<String> getPropertyNames(PropertySource<?> propertySource) {
-//        if (propertySource instanceof org.springframework.core.env.EnumerablePropertySource) {
-//            return java.util.Arrays.asList(((org.springframework.core.env.EnumerablePropertySource<?>) propertySource).getPropertyNames());
-//        }
-//        return java.util.Collections.emptyList();
-//    }
-    
     
     // 스프링 부트가 구동될 때 읽어 들인 설정 파일들의 소스(PropertySource)에서 해당 소스 내부에 들어 있는 모든 프로퍼티 키(이름)들의 목록을 뽑아내는 역할을 합니다.
     private Iterable<String> getPropertyNames(PropertySource<?> propertySource) {
