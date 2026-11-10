@@ -1,1 +1,2 @@
-org.springframework.boot.env.EnvironmentPostProcessor=com.example.demo.config.EnvironmentPostProcessorCustom
+# SpringPropertiesApplication 에서 셋팅
+#org.springframework.boot.env.EnvironmentPostProcessor=com.example.demo.config.EnvironmentPostProcessorCustom

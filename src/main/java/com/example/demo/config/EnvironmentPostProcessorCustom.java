@@ -3,16 +3,18 @@ package com.example.demo.config;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import com.example.demo.util.JasyptUtils;
 
@@ -20,7 +22,7 @@ import com.example.demo.util.JasyptUtils;
 public class EnvironmentPostProcessorCustom implements EnvironmentPostProcessor {
 
     private static final String PROPERTY_SOURCE_NAME = "jasyptDecryptedProperties";
-
+    
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, org.springframework.boot.SpringApplication application) {
         // 1. 외부 JVM 옵션 또는 환경 변수에서 마스터 키 가져오기 (예: -Djasypt.encryptor.password=키값)
@@ -31,10 +33,18 @@ public class EnvironmentPostProcessorCustom implements EnvironmentPostProcessor 
             // 키가 없으면 복호화를 수행하지 않고 패스 (또는 예외 처리)
             return;
         }
-        
 
         MutablePropertySources propertySources = environment.getPropertySources();
+        
+        String activeProfile = getActiveProfile(environment);
+        System.out.println("activeProfile :::" + activeProfile);
+        String dbConfigPath = String.format("com/example/demo/database/%s-db.yml", activeProfile);
+        String propertySourceName = activeProfile + "DbProperties";
+        
+        
         Map<String, Object> decryptedProperties = new HashMap<>();
+        
+        loadDatabasePropertySource(propertySources, dbConfigPath, propertySourceName);
 
         // 2. 기존 설정 파일들의 프로퍼티를 순회하며 ENC(...) 패턴 탐지 및 복호화
         for (PropertySource<?> propertySource : propertySources) {
@@ -80,4 +90,36 @@ public class EnvironmentPostProcessorCustom implements EnvironmentPostProcessor 
         
         return Collections.emptyList();
     }
+    
+    // 자바 패키지 경로에 있는 yml파일 읽어서 Environment에 등록
+    private void loadDatabasePropertySource(MutablePropertySources propertySources, String dbConfigPath, String propertySourceName) {
+        try {
+        	Resource resource = new ClassPathResource(dbConfigPath);
+            if (resource.exists()) {
+                YamlPropertySourceLoader loader = new YamlPropertySourceLoader();
+                List<PropertySource<?>> loadedPropertySources = loader.load(propertySourceName, resource);
+                for (PropertySource<?> propertySource : loadedPropertySources) {
+                    // 기존 소스들 뒤에 추가하여 순회 대상이 되도록 함
+                    propertySources.addLast(propertySource); 
+                    System.out.println("dbConfigPath:::" + dbConfigPath);
+                    System.out.println("propertySourceName:::" + propertySourceName);
+                }
+            } else {
+                System.out.println("DB config file not found at: " + dbConfigPath);
+            }
+        } catch (Exception e) {
+        	throw new RuntimeException("Failed to load DB config from path: " + dbConfigPath, e);
+        }
+    }
+    
+    // 활성화된 프로필 확인
+    private String getActiveProfile(ConfigurableEnvironment environment) {
+        String[] profiles = environment.getActiveProfiles();
+        if (profiles.length > 0 && profiles[0] != null && !profiles[0].isEmpty()) {
+            return profiles[0]; // 예: dev, test, prod 등
+        }
+        // 활성화된 프로필이 지정되지 않은 경우 기본값으로 local 반환
+        return "local";
+    }
+    
 }

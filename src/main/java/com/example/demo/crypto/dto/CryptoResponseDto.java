@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class CryptoResponseDto {
-	String enText;
-	String descText;
+	
+//	String enText;
+//	String descText;
+	
 }

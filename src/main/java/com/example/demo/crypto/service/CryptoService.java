@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.crypto.dto.CryptoRequestDto;
-import com.example.demo.crypto.dto.CryptoResponseDto;
 import com.example.demo.util.AesCryptoUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +22,12 @@ public class CryptoService {
         
         String plainText = null;
         
-        if("01".equals(cryptoRequestDto.getCryptoTypeCode())){
-        	//sRbEVT+EzM0ea0HgfkUrn7K1DHRj1sOvtS8KqTHQj3Y=
+        String cryptoTypeCode = cryptoRequestDto.getCryptoTypeCode();
+        String cryptoText = cryptoRequestDto.getCryptoText();
+        
+        validateByTypeCode(cryptoTypeCode,cryptoText);
+        
+        if("01".equals(cryptoTypeCode)){
         	plainText = "RRN_ENCRYPT_" + cryptoRequestDto.getCryptoText();
         } else if("02".equals(cryptoRequestDto.getCryptoTypeCode())){
         	plainText = "ACCOUNT_ENCRYPT_" + cryptoRequestDto.getCryptoText();
@@ -32,7 +35,6 @@ public class CryptoService {
         	plainText = "PHONE_ENCRYPT_" + cryptoRequestDto.getCryptoText();
         }
         
-        // 2. 공통 암호화 수행
         return aesCryptoUtils.encrypt(plainText);
     }
     
@@ -50,55 +52,49 @@ public class CryptoService {
     	System.out.println("decryptedText:::" + decryptedText);
     	
     	String cipherText = "";
-        String typeCode = cryptoRequestDto.getCryptoTypeCode();
+        String cryptoTypeCode = cryptoRequestDto.getCryptoTypeCode();
 
         // 2. 타입 코드별 접두사 검증 및 제거 (틀리면 예외 발생)
-        if ("01".equals(typeCode)) {
+        if ("01".equals(cryptoTypeCode)) {
             if (!decryptedText.startsWith("RRN_ENCRYPT_")) {
                 throw new IllegalArgumentException("주민번호(01) 타입에 맞지 않는 암호문이거나 키가 일치하지 않습니다.");
             }
             cipherText = decryptedText.replace("RRN_ENCRYPT_", "");
             
-        } else if ("02".equals(typeCode)) {
+        } else if ("02".equals(cryptoTypeCode)) {
             if (!decryptedText.startsWith("ACCOUNT_ENCRYPT_")) {
                 throw new IllegalArgumentException("계좌번호(02) 타입에 맞지 않는 암호문이거나 키가 일치하지 않습니다.");
             }
             cipherText = decryptedText.replace("ACCOUNT_ENCRYPT_", "");
             
-        } else if ("03".equals(typeCode)) {
+        } else if ("03".equals(cryptoTypeCode)) {
             if (!decryptedText.startsWith("PHONE_ENCRYPT_")) {
                 throw new IllegalArgumentException("핸드폰번호(03) 타입에 맞지 않는 암호문이거나 키가 일치하지 않습니다.");
             }
             cipherText = decryptedText.replace("PHONE_ENCRYPT_", "");
             
         } else {
-            throw new IllegalArgumentException("지원하지 않는 코드값입니다: " + typeCode);
+            throw new IllegalArgumentException("지원하지 않는 코드값입니다: " + cryptoTypeCode);
         }
 
         return cipherText;
     }
 
-    // 코드값 및 렝스(길이) 검증 메서드 (직관적인 if-else)
-//    private void validateByTypeCode(String typeCode, String text, boolean isEncrypt) {
-//        if (!isEncrypt) return; // 복호화 때는 평문 길이 검증 불필요
-//
-//        if ("01".equals(typeCode)) {
-//            // 주민번호 예시 (예: 13자리)
-//            if (text.length() != 13) {
-//                throw new IllegalArgumentException("주민번호는 13자리여야 합니다.");
-//            }
-//        } else if ("02".equals(typeCode)) {
-//            // 계좌번호 예시 (예: 10~14자리 등 가변 길이 체크)
-//            if (text.length() < 10 || text.length() > 14) {
-//                throw new IllegalArgumentException("계좌번호 길이를 확인해주세요.");
-//            }
-//        } else if ("03".equals(typeCode)) {
-//            // 핸드폰번호 예시 (예: 10~11자리)
-//            if (text.length() < 10 || text.length() > 11) {
-//                throw new IllegalArgumentException("핸드폰번호는 10~11자리여야 합니다.");
-//            }
-//        } else {
-//            throw new IllegalArgumentException("지원하지 않는 코드값입니다: " + typeCode);
-//        }
-//    }
+    private void validateByTypeCode(String cryptoTypeCode, String cryptoText) {
+        if ("01".equals(cryptoTypeCode)) {
+            if (cryptoText.length() != 13) {
+                throw new IllegalArgumentException("주민번호는 13자리여야 합니다.");
+            }
+        } else if ("02".equals(cryptoTypeCode)) {
+            if (cryptoText.length() < 10 || cryptoText.length() > 14) {
+                throw new IllegalArgumentException("계좌번호 길이를 확인해주세요.");
+            }
+        } else if ("03".equals(cryptoTypeCode)) {
+            if (cryptoText.length() < 10 || cryptoText.length() > 11) {
+                throw new IllegalArgumentException("핸드폰번호는 10~11자리여야 합니다.");
+            }
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 코드값입니다: " + cryptoTypeCode);
+        }
+    }
 }

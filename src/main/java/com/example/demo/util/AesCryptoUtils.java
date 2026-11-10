@@ -11,10 +11,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AesCryptoUtils {
-
+	
+	// AES: 데이터를 암호화하는 핵심 알고리즘
+	// CBC: 앞 블록과 뒤 블록을 엮어서 매번 무작위로 다른 암호문이 나오도록 만드는 안전한 운용 방식 IvParameterSpec 초깃값
+	// PKCS5Padding: 데이터의 남는 빈 공간을 안전하게 채워주는 규칙
 	private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
-    // 실제 환경에서는 외부 설정(Vault, KMS 등)에서 안전하게 주입받아야 합니다.
+
+	// 암호를 잠그고 풀 때 사용하는 key 32바이트 입력필요
     private final SecretKeySpec keySpec = new SecretKeySpec("12345678901234567890123456789012".getBytes(), "AES");
+    
+    // 암호화 결과값 중복 방지
     private final IvParameterSpec ivSpec = new IvParameterSpec("1234567890123456".getBytes());
 
     public String encrypt(String plainText) {
@@ -22,6 +28,7 @@ public class AesCryptoUtils {
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            // 평문 문자열을 암호화된 바이트 데이터로 변환
             byte[] encrypted = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception e) {
